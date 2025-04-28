@@ -8,4 +8,9 @@ class WeatherUtil {
     WeatherDescription.clear: Icons.brightness_1,
     WeatherDescription.rain: Icons.umbrella
   };
+
+  static Map<TemperatureUnit, String> temperatureLabels = {
+    TemperatureUnit.celsius: "°C",
+    TemperatureUnit.fahrenheit: "°F",
+  };
 }

@@ -47,11 +47,13 @@ class Temperature {
   final int current;
   final TemperatureUnit temperatureUnit;
 
-  Temperature({required this.current, this.temperatureUnit = TemperatureUnit.celcius});
+  static int celsiusToFahrenheit(int temp) => (temp * 9 / 5 + 32).floor();
+
+  Temperature({required this.current, this.temperatureUnit = TemperatureUnit.celsius});
 }
 
 // 온도단위
-enum TemperatureUnit { celcius, fahrenheit }
+enum TemperatureUnit { celsius, fahrenheit }
 
 // 날씨상세
 enum WeatherDescription { clear, cloudy, sunny, rain }
