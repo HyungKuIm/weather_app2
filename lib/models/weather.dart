@@ -32,6 +32,14 @@ class Weather {
   Weather({required this.city, required this.dateTime,
             required this.temperature, required this.weatherDescription,
           required this.weatherIcon});
+
+  static Map<WeatherDescription, String> displayValues = {
+    WeatherDescription.clear: "선명",
+    WeatherDescription.cloudy: "흐림",
+    WeatherDescription.rain: "비",
+    WeatherDescription.sunny: "맑음"
+  };
+
 }
 
 // 온도

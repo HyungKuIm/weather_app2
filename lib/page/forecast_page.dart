@@ -70,7 +70,18 @@ class _ForecastPageState extends State<ForecastPage> {
                   );
 
                 }),
-              )
+              ),
+              Padding(padding: EdgeInsets.only(bottom: 12.0),
+                child: Column(
+                  children: <Widget>[
+                    Text(
+                      Weather.displayValues[_forecastController.nowWeather.weatherDescription]!,
+                        style: Theme.of(context).textTheme.headlineLarge),
+                    Text(
+                        _forecastController.nowWeather.temperature.current.toString(),
+                        style: Theme.of(context).textTheme.headlineMedium),
+                  ],
+                ),)
             ],
           )
         ],
