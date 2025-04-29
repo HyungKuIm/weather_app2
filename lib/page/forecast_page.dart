@@ -57,7 +57,7 @@ class _ForecastPageState extends State<ForecastPage> {
                     2: FixedColumnWidth(30.0),
                     3: FixedColumnWidth(30.0)
                   },
-                  children: List.generate(7, (index) {
+                  children: List.generate(5, (index) {
                     ForecastDay day = forecast.days[index];
                     Weather dailyWeather = forecast.days[index].hourlyWeather[0];
 
@@ -80,7 +80,7 @@ class _ForecastPageState extends State<ForecastPage> {
                   child: Column(
                     children: <Widget>[
                       Text(
-                        Weather.displayValues[_forecastController.nowWeather.weatherDescription]!,
+                        Humanize.weatherDescription(_forecastController.nowWeather),
                           style: Theme.of(context).textTheme.headlineLarge),
                       Text(
                         Humanize.currentTemperature(TemperatureUnit.celsius, _forecastController.nowWeather)

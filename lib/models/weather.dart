@@ -56,4 +56,4 @@ class Temperature {
 enum TemperatureUnit { celsius, fahrenheit }
 
 // 날씨상세
-enum WeatherDescription { clear, cloudy, sunny, rain }
+enum WeatherDescription { clear, cloudy, sunny, rain, snow, thunder }
