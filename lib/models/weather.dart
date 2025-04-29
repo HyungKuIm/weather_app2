@@ -17,7 +17,11 @@ class ForecastDay {
               required this.min, required this.max});
 
   static Weather getWeatherForHour(ForecastDay self, int hour) {
-    return self.hourlyWeather.firstWhere((w) => w.dateTime.hour <= hour);
+    return self.hourlyWeather.reduce((a, b) {
+      int diffA = (a.dateTime.hour - hour).abs();
+      int diffB = (b.dateTime.hour - hour).abs();
+      return diffA <= diffB ? a : b;
+    });
   }
 }
 

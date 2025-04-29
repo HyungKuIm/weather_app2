@@ -7,14 +7,11 @@ class ForecastController {
   final String _city;
   late Forecast forecast;
   late Weather nowWeather;
-  var _random = math.Random();
+  // var _random = math.Random();
 
-  final WeatherService _weatherService = WeatherService();
-  late Future<List<dynamic>> weatherFuture;
 
-  ForecastController(this._city) {
-    init();
-  }
+
+  ForecastController(this._city);
 
 
 
@@ -28,8 +25,9 @@ class ForecastController {
     Map<String, List<dynamic>> groupedByDate = {};
 
     for (var item in rawList) {
-      DateTime dt = DateTime.fromMicrosecondsSinceEpoch(item['dt'] * 1000);
-      String dateKey = "${dt.year}-${dt.month}-${dt.day}";
+      DateTime dt = DateTime.fromMillisecondsSinceEpoch(item['dt'] * 1000);
+      String twoDigits(int n) => n.toString().padLeft(2, '0');
+      String dateKey = "${dt.year}-${twoDigits(dt.month)}-${twoDigits(dt.day)}";
       groupedByDate.putIfAbsent(dateKey, () => []).add(item);
     }
 
@@ -42,10 +40,13 @@ class ForecastController {
       double maxTemp = double.negativeInfinity;
 
       for (var item in items) {
-        DateTime dt = DateTime.fromMicrosecondsSinceEpoch(item['dt'] * 1000);
-        double temp = item['main']['temp'];
+        DateTime dt = DateTime.fromMillisecondsSinceEpoch(item['dt'] * 1000);
+        double temp = (item['main']['temp'] as num).toDouble();
+        double min = (item['main']['temp_min']  as num).toDouble();
+        double max = (item['main']['temp_max'] as num).toDouble();
         String desc = item['weather'][0]['main'].toString();
         String icon = item['weather'][0]['icon'];
+
 
         // enum 매핑 처리
         WeatherDescription description = WeatherDescription.clear;
@@ -59,54 +60,24 @@ class ForecastController {
           description = WeatherDescription.thunder;
         }
         
-        forecasts.add(Weather(city: _city, dateTime: dt, temperature: Temperature(current: temp.toInt()),
+        forecasts.add(Weather(city: _city, dateTime: dt, temperature: Temperature(current: temp.round()),
             weatherDescription: description, weatherIcon: icon));
 
-        minTemp = math.min(minTemp, temp);
-        maxTemp = math.max(maxTemp, temp);
+        minTemp = math.min(minTemp, min);
+        maxTemp = math.max(maxTemp, max);
       }
 
       final parsedDate = DateTime.parse(dateStr);
       sevenDaysForecast.add(ForecastDay(
         hourlyWeather: forecasts,
         date: parsedDate,
-        min: minTemp.toInt(),
-        max: maxTemp.toInt(),
+        min: minTemp.round(),
+        max: maxTemp.round(),
       ));
 
     });
 
-    // List.generate(5, (index) {
-    //   List<Weather> forecasts = [];
-    //   DateTime startDateTime = DateTime(now.year, now.month, now.day, 0);
-    //
-    //   for (var i = 0; i < 8; i++) {
-    //     var description = descriptions.elementAt(
-    //       _random.nextInt(descriptions.length));
-    //     forecasts.add(Weather(city: _city, dateTime: startDateTime,
-    //         temperature: Temperature(current: 25),
-    //         weatherDescription: description, weatherIcon: ""));
-    //     startDateTime = startDateTime.add(Duration(hours: 3));
-    //
-    //   }
-    //   int low = 15;
-    //   int high = 35;
-    //   int runningMin = 100;
-    //   int runningMax = -100;
-    //   final temp = low + _random.nextInt(high - low);
-    //   runningMin = math.min(runningMin, temp) - 5;
-    //   runningMax = math.max(runningMax, temp);
-    //
-    //   final forecastDay = ForecastDay(hourlyWeather: forecasts, date: now,
-    //       min: runningMin, max: runningMax);
-    //   sevenDaysForecast.add(forecastDay);
-    //   now = now.add(Duration(days: 1));
-    //
-    // });
-    // forecast = Forecast(city: _city, days: sevenDaysForecast);
-    // ForecastDay nowDay = forecast.days[0];
-    // nowWeather = ForecastDay.getWeatherForHour(nowDay, now.hour);
-    // 정렬 및 오늘 날짜 찾기
+
     sevenDaysForecast.sort((a, b) => a.date.compareTo(b.date));
     forecast = Forecast(city: _city, days: sevenDaysForecast);
     ForecastDay nowDay = forecast.days[0];

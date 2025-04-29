@@ -7,7 +7,7 @@ void main() async {
 
   await weatherFuture.then((list) {
     for (dynamic weather in list) {
-      print(weather['weather'][0]['main']);
+      print('temp: ${weather['main']['temp']}');
     }
   });
 }
