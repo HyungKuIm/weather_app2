@@ -56,14 +56,7 @@ class _ForecastPageState extends State<ForecastPage> {
         Padding(padding: EdgeInsets.symmetric(vertical: 32.0),
             child: Stack(
               children: <Widget>[
-                Positioned(
-                    left: 50.0, top: 50.0,
-                    child: Image.asset(
-                      'assets/images/sun.png', width: 150.0, height: 150.0,)),
-                Positioned(
-                    left: 50.0, top: 120.0,
-                    child: Image.asset(
-                      'assets/images/cloud.png', width: 200.0, height: 100.0,)),
+                getWeatherImage(_forecastController.nowWeather.weatherDescription),
                 Column(
                   verticalDirection: VerticalDirection.up,
                   children: <Widget>[
@@ -75,6 +68,7 @@ class _ForecastPageState extends State<ForecastPage> {
                       },
                       children: forecast.days.map((day) {
                         Weather dailyWeather = day.hourlyWeather[0];
+                        final iconUrl = "http://openweathermap.org/img/wn/${dailyWeather.weatherIcon}@2x.png";
                         return TableRow(
                           children: [
                           TableCell(child: Padding(
@@ -84,9 +78,7 @@ class _ForecastPageState extends State<ForecastPage> {
                               .weekday]!),)),
                           TableCell(child: Padding(
                               padding: const EdgeInsets.all(4.0),
-                              child: Icon(
-                              WeatherUtil.weatherIcons[dailyWeather
-                              .weatherDescription]))),
+                              child: Image.network(iconUrl, width: 32, height: 32))),
                           TableCell(child: Padding(
                               padding: const EdgeInsets.all(4.0),
                               child: Text(day.max.toString()))),
@@ -134,4 +126,55 @@ class _ForecastPageState extends State<ForecastPage> {
   }
 
 
+}
+
+Widget getWeatherImage(WeatherDescription description) {
+  switch (description) {
+    case WeatherDescription.clear:
+      return Positioned(
+        left: 50, top: 50,
+        child: Image.asset('assets/images/sun.png', width: 150, height: 150),
+      );
+    case WeatherDescription.cloudy:
+      return Positioned(
+        left: 50, top: 120,
+        child: Image.asset('assets/images/cloud.png', width: 200, height: 100),
+      );
+    case WeatherDescription.rain:
+      return Stack(
+        children: [
+          Positioned(
+            left: 50, top: 120,
+            child: Image.asset('assets/images/cloud.png', width: 200, height: 100),
+          ),
+          Positioned(
+            left: 100, top: 200,
+            child: Image.asset('assets/images/rain.png', width: 100, height: 100),
+          ),
+        ],
+      );
+    case WeatherDescription.snow:
+      return Positioned(
+        left: 50, top: 120,
+        child: Image.asset('assets/images/snow.png', width: 200, height: 100),
+      );
+    case WeatherDescription.thunder:
+      return Stack(
+        children: [
+          Positioned(
+            left: 50, top: 50,
+            child: Image.asset('assets/images/cloud.png', width: 200, height: 100),
+          ),
+          Positioned(
+            left: 100, top: 150,
+            child: Image.asset('assets/images/thunder.png', width: 100, height: 100),
+          ),
+        ],
+      );
+    default:
+      return Positioned(
+        left: 50, top: 50,
+        child: Image.asset('assets/images/cloud.png', width: 150, height: 150),
+      );
+  }
 }
