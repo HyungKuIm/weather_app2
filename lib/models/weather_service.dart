@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class WeatherService {
-  final String apiKey = 'dac5c0dfce73f818fe07d188b2be8980';
+  final String apiKey = '오픈웨더맵 api key';
   //api.openweathermap.org/data/2.5/forecast?lat={lat}&lon={lon}&appid={API key}
   final String apiUrl = 'https://api.openweathermap.org/data/2.5/forecast';
 
