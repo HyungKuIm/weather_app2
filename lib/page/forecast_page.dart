@@ -4,6 +4,7 @@ import 'package:weather_app2/models/weather.dart';
 import 'package:weather_app2/utils/DateUtils.dart' as dt;
 import 'package:weather_app2/utils/weather_utils.dart';
 import 'package:weather_app2/utils/humanize.dart';
+import 'package:weather_app2/page/city_page.dart';
 
 class ForecastPage extends StatefulWidget {
 
@@ -21,14 +22,33 @@ class ForecastPage extends StatefulWidget {
 
 class _ForecastPageState extends State<ForecastPage> {
 
-  late final ForecastController _forecastController;
+  ForecastController? _forecastController;
   late Future<void> _initFuture;
+  String _city = 'Seoul';
 
   @override
   void initState() {
     super.initState();
-    _forecastController = ForecastController("Seoul");
-    _initFuture = _forecastController.init();
+    _loadForecast();
+  }
+
+  void _loadForecast() {
+    _forecastController = ForecastController(_city);
+    _initFuture = _forecastController!.init();
+  }
+
+  void _selectCity() async {
+    final result = await Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) => const CityPage())
+    );
+
+    if (result != null && result != _city) {
+      setState(() {
+        _city = result;
+        _loadForecast();  // 도시변경후 재검색
+      });
+    }
   }
 
   @override
@@ -40,84 +60,90 @@ class _ForecastPageState extends State<ForecastPage> {
         return Center(child: Text("에러 발생: ${snapshop.error}"));
       }
 
-      final forecast = _forecastController.forecast;
+      final forecast = _forecastController!.forecast;
 
 
       return Scaffold(
-        appBar: AppBar(title: Text(
-          _forecastController.nowWeather.city,
-          style: Theme
-              .of(context)
-              .textTheme
-              .headlineLarge,
-        ), centerTitle: true,),
+        appBar: AppBar(
+          title: Text(
+              _city,
+              style: Theme
+                  .of(context)
+                  .textTheme
+                  .headlineLarge,
+            ),
+          leading: IconButton(
+              onPressed: _selectCity,
+              icon: const Icon(Icons.location_city)),
+          centerTitle: true,),
+        
         body:
 
-        Padding(padding: EdgeInsets.symmetric(vertical: 32.0),
-            child: Stack(
-              children: <Widget>[
-                getWeatherImage(_forecastController.nowWeather.weatherDescription),
-                Column(
-                  verticalDirection: VerticalDirection.up,
-                  children: <Widget>[
-                    Table(
-                      columnWidths: const {
-                        0: FixedColumnWidth(100.0),
-                        2: FixedColumnWidth(30.0),
-                        3: FixedColumnWidth(30.0)
-                      },
-                      children: forecast.days.map((day) {
-                        Weather dailyWeather = day.hourlyWeather[0];
-                        final iconUrl = "http://openweathermap.org/img/wn/${dailyWeather.weatherIcon}@2x.png";
-                        return TableRow(
-                          children: [
-                          TableCell(child: Padding(
-                              padding: const EdgeInsets.all(4.0),
-                              child: Text(
-                              dt.DateUtils.weekdays[dailyWeather.dateTime
-                              .weekday]!),)),
-                          TableCell(child: Padding(
-                              padding: const EdgeInsets.all(4.0),
-                              child: Image.network(iconUrl, width: 32, height: 32))),
-                          TableCell(child: Padding(
-                              padding: const EdgeInsets.all(4.0),
-                              child: Text(day.max.toString()))),
-                          TableCell(child: Padding(
-                              padding: const EdgeInsets.all(4.0),
-                              child: Text(day.min.toString()))),
-                        ]
-                        );
-                      }).toList(),
-
-                    ),
-                  ]
-                ),
-
-                Padding(padding: EdgeInsets.only(bottom: 12.0),
-                  child: Column(
+          Padding(padding: EdgeInsets.symmetric(vertical: 32.0),
+              child: Stack(
+                children: <Widget>[
+                  getWeatherImage(_forecastController!.nowWeather.weatherDescription),
+                  Column(
+                    verticalDirection: VerticalDirection.up,
                     children: <Widget>[
-                      Text(
-                          Humanize.weatherDescription(
-                              _forecastController.nowWeather),
-                          style: Theme
-                              .of(context)
-                              .textTheme
-                              .headlineLarge),
-                      Text(
-                          Humanize.currentTemperature(
-                              TemperatureUnit.celsius,
-                              _forecastController.nowWeather)
-                          ,
-                          style: Theme
-                              .of(context)
-                              .textTheme
-                              .displayLarge),
-                    ],
+                      Table(
+                        columnWidths: const {
+                          0: FixedColumnWidth(100.0),
+                          2: FixedColumnWidth(30.0),
+                          3: FixedColumnWidth(30.0)
+                        },
+                        children: forecast.days.map((day) {
+                          Weather dailyWeather = day.hourlyWeather[0];
+                          final iconUrl = "http://openweathermap.org/img/wn/${dailyWeather.weatherIcon}@2x.png";
+                          return TableRow(
+                            children: [
+                            TableCell(child: Padding(
+                                padding: const EdgeInsets.all(4.0),
+                                child: Text(
+                                dt.DateUtils.weekdays[dailyWeather.dateTime
+                                .weekday]!),)),
+                            TableCell(child: Padding(
+                                padding: const EdgeInsets.all(4.0),
+                                child: Image.network(iconUrl, width: 32, height: 32))),
+                            TableCell(child: Padding(
+                                padding: const EdgeInsets.all(4.0),
+                                child: Text(day.max.toString()))),
+                            TableCell(child: Padding(
+                                padding: const EdgeInsets.all(4.0),
+                                child: Text(day.min.toString()))),
+                          ]
+                          );
+                        }).toList(),
+
+                      ),
+                    ]
                   ),
-                )
-              ],
-            )
-        )
+
+                  Padding(padding: EdgeInsets.only(bottom: 12.0),
+                    child: Column(
+                      children: <Widget>[
+                        Text(
+                            Humanize.weatherDescription(
+                                _forecastController!.nowWeather),
+                            style: Theme
+                                .of(context)
+                                .textTheme
+                                .headlineLarge),
+                        Text(
+                            Humanize.currentTemperature(
+                                TemperatureUnit.celsius,
+                                _forecastController!.nowWeather)
+                            ,
+                            style: Theme
+                                .of(context)
+                                .textTheme
+                                .displayLarge),
+                      ],
+                    ),
+                  )
+                ],
+              )
+          )
         //),
         //})
 

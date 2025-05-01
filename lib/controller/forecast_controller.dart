@@ -2,6 +2,7 @@ import 'package:weather_app2/models/weather.dart';
 import 'dart:math' as math;
 
 import '../models/weather_service.dart';
+import '../utils/string_utils.dart';
 
 class ForecastController {
   final String _city;
@@ -50,13 +51,13 @@ class ForecastController {
 
         // enum 매핑 처리
         WeatherDescription description = WeatherDescription.clear;
-        if (desc.contains("cloud")) {
+        if (desc.containsIgnoreCase("cloud")) {
           description = WeatherDescription.cloudy;
-        } else if (desc.contains("rain")) {
+        } else if (desc.containsIgnoreCase("rain")) {
           description = WeatherDescription.rain;
-        } else if (desc.contains("clear")) {
+        } else if (desc.containsIgnoreCase("clear")) {
           description = WeatherDescription.clear;
-        } else if (desc.contains("thunder")) {
+        } else if (desc.containsIgnoreCase("thunder")) {
           description = WeatherDescription.thunder;
         }
         
