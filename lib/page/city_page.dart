@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 
 class CityPage extends StatefulWidget {
 
-  const CityPage({super.key});
+  final String? selectedCity;
+
+  const CityPage({super.key, this.selectedCity});
 
   @override
   State<StatefulWidget> createState() {
@@ -15,6 +17,12 @@ class _CityPageState extends State<CityPage> {
 
   final List<String> cities = ['Seoul', 'Tokyo', 'New York', 'Paris', 'London'];
   String? selected;
+
+  @override
+  void initState() {
+    super.initState();
+    selected = widget.selectedCity;
+  }
 
   @override
   Widget build(BuildContext context) {

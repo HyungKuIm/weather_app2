@@ -40,7 +40,7 @@ class _ForecastPageState extends State<ForecastPage> {
   void _selectCity() async {
     final result = await Navigator.push(
         context,
-        MaterialPageRoute(builder: (_) => const CityPage())
+        MaterialPageRoute(builder: (_) => CityPage(selectedCity: _city,))
     );
 
     if (result != null && result != _city) {
@@ -75,6 +75,18 @@ class _ForecastPageState extends State<ForecastPage> {
           leading: IconButton(
               onPressed: _selectCity,
               icon: const Icon(Icons.location_city)),
+          actions: [
+            Center(
+              child: Padding(padding: const EdgeInsets.only(right: 16.0),
+                      child: Text(
+                        WeatherUtil.temperatureLabels[TemperatureUnit.celsius]!,
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold
+                        ),
+                      ),),
+            )
+          ],
           centerTitle: true,),
         
         body:
